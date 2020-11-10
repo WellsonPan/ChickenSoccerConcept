@@ -27,6 +27,10 @@ public class ChickenMovement : MonoBehaviour
     public float timeTakenForAction;
     public float timeTakenForNewAction;
 
+    public LayerMask boundaries;
+    public float boundaryCheckDist;
+    private bool runningFromBoundary;
+
     float currentTime;
 
     float distanceBetweenPlayerAndChicken;
@@ -41,6 +45,7 @@ public class ChickenMovement : MonoBehaviour
         transform.position = new Vector3(0, transform.localScale.y / 2f, 0);
         myRigidbody = GetComponent<Rigidbody>();
         player = GameObject.FindGameObjectWithTag("Player");
+        Physics.IgnoreCollision(GetComponent<Collider>(), player.GetComponent<Collider>());
         currentState = states.wandering;
         previousState = states.idle;
         StartCoroutine(PickRandomState());
@@ -79,7 +84,7 @@ public class ChickenMovement : MonoBehaviour
                 StopCoroutine(Wander());
             }
 
-            if (currentState == states.running && !choosingDirection)
+            if (currentState == states.running && !choosingDirection && !runningFromBoundary)
             {
                 choosingDirection = true;
                 StartCoroutine(RunFromPlayer());
@@ -112,14 +117,33 @@ public class ChickenMovement : MonoBehaviour
 
     void FixedUpdate()
     {
+        BoundaryCheck();
+
         if (currentState == states.running || currentState == states.wandering)
         {
             myRigidbody.MovePosition(transform.position + (transform.forward * speed * Time.fixedDeltaTime));
         }
         else
         {
+            runningFromBoundary = false;
             choosingDirection = false;
             StopCoroutine(RunFromPlayer());
+        }
+    }
+
+    public void BoundaryCheck()
+    {
+        RaycastHit hit;
+        if(Physics.Raycast(transform.position, transform.forward, out hit, boundaryCheckDist, boundaries))
+        {
+            runningFromBoundary = true;
+            transform.rotation = Quaternion.Euler(transform.rotation.x, transform.rotation.y + 180f, transform.rotation.z);
+            //Debug.DrawLine(transform.position, transform.position + transform.forward * boundaryCheckDist, Color.green, 5f);
+        }
+        else
+        {
+            runningFromBoundary = false;
+            //Debug.DrawLine(transform.position, transform.position + transform.forward * boundaryCheckDist, Color.red);
         }
     }
 
