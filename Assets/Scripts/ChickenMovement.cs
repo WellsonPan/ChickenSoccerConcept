@@ -8,6 +8,7 @@ public class ChickenMovement : MonoBehaviour
 {
     public GameObject player;
     public Rigidbody myRigidbody;
+    public Animator chickenAnimator;
 
     public float speed;
     public float runSpeed;
@@ -42,8 +43,9 @@ public class ChickenMovement : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        transform.position = new Vector3(0, transform.localScale.y / 2f, 0);
+        transform.position = new Vector3(0, transform.position.y, 0);
         myRigidbody = GetComponent<Rigidbody>();
+        chickenAnimator = GetComponent<Animator>();
         player = GameObject.FindGameObjectWithTag("Player");
         Physics.IgnoreCollision(GetComponent<Collider>(), player.GetComponent<Collider>());
         currentState = states.wandering;
@@ -113,12 +115,11 @@ public class ChickenMovement : MonoBehaviour
         }
 
         StateCheck();
+        SetAnimatorStates();
     }
 
     void FixedUpdate()
     {
-        BoundaryCheck();
-
         if (currentState == states.running || currentState == states.wandering)
         {
             myRigidbody.MovePosition(transform.position + (transform.forward * speed * Time.fixedDeltaTime));
@@ -129,6 +130,8 @@ public class ChickenMovement : MonoBehaviour
             choosingDirection = false;
             StopCoroutine(RunFromPlayer());
         }
+
+        BoundaryCheck();
     }
 
     public void BoundaryCheck()
@@ -137,7 +140,7 @@ public class ChickenMovement : MonoBehaviour
         if(Physics.Raycast(transform.position, transform.forward, out hit, boundaryCheckDist, boundaries))
         {
             runningFromBoundary = true;
-            transform.rotation = Quaternion.Euler(transform.rotation.x, transform.rotation.y + 180f, transform.rotation.z);
+            transform.rotation = Quaternion.Euler(transform.rotation.eulerAngles.x, transform.rotation.eulerAngles.y + 180f, transform.rotation.eulerAngles.z);
             //Debug.DrawLine(transform.position, transform.position + transform.forward * boundaryCheckDist, Color.green, 5f);
         }
         else
@@ -186,11 +189,16 @@ public class ChickenMovement : MonoBehaviour
         }
     }
 
+    public void SetAnimatorStates()
+    {
+        chickenAnimator.SetBool("isWalking", wandering || running);
+    }
+
     IEnumerator RunFromPlayer()
     {
         float playerRotation = player.transform.rotation.eulerAngles.y;
         float randomDir = Random.Range(playerRotation - maximumAngleOfDeviation, playerRotation + maximumAngleOfDeviation);
-        transform.rotation = Quaternion.Euler(transform.rotation.x, randomDir, transform.rotation.z);
+        transform.rotation = Quaternion.Euler(transform.rotation.eulerAngles.x, randomDir, transform.rotation.eulerAngles.z);
         yield return new WaitForSeconds(timeTakenForAction);
         choosingDirection = false;
     }
@@ -198,7 +206,7 @@ public class ChickenMovement : MonoBehaviour
     IEnumerator Wander()
     {
         float randomDir = Random.Range(0, 361);
-        transform.rotation = Quaternion.Euler(transform.rotation.x, randomDir, transform.rotation.z);
+        transform.rotation = Quaternion.Euler(transform.rotation.eulerAngles.x, randomDir, transform.rotation.eulerAngles.z);
         yield return new WaitForSeconds(timeTakenForAction);
         wander = false;
     }
