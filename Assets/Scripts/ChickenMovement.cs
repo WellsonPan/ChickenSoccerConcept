@@ -9,6 +9,7 @@ public class ChickenMovement : MonoBehaviour
     public GameObject player;
     public Rigidbody myRigidbody;
     public Animator chickenAnimator;
+    private int isWalkingHash;
 
     public float speed;
     public float runSpeed;
@@ -27,31 +28,35 @@ public class ChickenMovement : MonoBehaviour
 
     public float timeTakenForAction;
     public float timeTakenForNewAction;
+    public float timeBetweenBoundaryChecks;
 
     public LayerMask boundaries;
     public float boundaryCheckDist;
     private bool runningFromBoundary;
 
-    float currentTime;
+    private float currentTime;
+    private float currentFixedTime;
 
-    float distanceBetweenPlayerAndChicken;
+    private float distanceBetweenPlayerAndChicken;
 
-    public enum states {wandering, idle, eating, running };
+    public enum states {wandering, idle, eating, running};
     public states currentState;
     public states previousState;
 
     // Start is called before the first frame update
     void Start()
     {
-        transform.position = new Vector3(0, transform.position.y, 0);
+        //transform.position = new Vector3(0, transform.position.y, 0);
         myRigidbody = GetComponent<Rigidbody>();
         chickenAnimator = GetComponent<Animator>();
+        isWalkingHash = Animator.StringToHash("isWalking");
         player = GameObject.FindGameObjectWithTag("Player");
         Physics.IgnoreCollision(GetComponent<Collider>(), player.GetComponent<Collider>());
         currentState = states.wandering;
         previousState = states.idle;
         StartCoroutine(PickRandomState());
         currentTime = Time.time;
+        currentFixedTime = Time.fixedTime;
     }
 
     // Update is called once per frame
@@ -131,7 +136,11 @@ public class ChickenMovement : MonoBehaviour
             StopCoroutine(RunFromPlayer());
         }
 
-        BoundaryCheck();
+        if (Time.fixedTime > currentFixedTime + timeBetweenBoundaryChecks)
+        {
+            BoundaryCheck();
+            currentFixedTime = Time.fixedDeltaTime;
+        }
     }
 
     public void BoundaryCheck()
@@ -191,7 +200,16 @@ public class ChickenMovement : MonoBehaviour
 
     public void SetAnimatorStates()
     {
-        chickenAnimator.SetBool("isWalking", wandering || running);
+        chickenAnimator.SetBool(isWalkingHash, wandering || running);
+
+        if(running)
+        {
+            chickenAnimator.speed = 3f;
+        }
+        else
+        {
+            chickenAnimator.speed = 1f;
+        }
     }
 
     IEnumerator RunFromPlayer()

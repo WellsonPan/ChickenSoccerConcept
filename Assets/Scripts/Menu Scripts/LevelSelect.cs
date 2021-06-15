@@ -24,8 +24,8 @@ public class LevelSelect : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        Debug.Log(Screen.width);
-        Debug.Log(Screen.height);
+        //Debug.Log(Screen.width);
+        //Debug.Log(Screen.height);
         levelSelectButtonGroup.GetComponent<RectTransform>().sizeDelta = new Vector2(Screen.width, Screen.height);
         levelSelectGrid = levelSelectButtonGroup.GetComponent<GridLayoutGroup>();
         if(Screen.width > Screen.height)
@@ -74,11 +74,11 @@ public class LevelSelect : MonoBehaviour
 
     void LoadSelectedLevel(int sceneID)
     {
-        Debug.Log("Loaded Level: " + sceneID);
+        //Debug.Log("Loaded Level: " + sceneID);
         //TODO add actual logic for loading the correct scene and unloading the main menu scene
         SceneManager.LoadScene(sceneID);
         //SceneManager.SetActiveScene();
-        Debug.Log(SceneManager.sceneCount);
+        //Debug.Log(SceneManager.sceneCount);
         SceneManager.UnloadSceneAsync(SceneManager.GetActiveScene().buildIndex);
     }
 }

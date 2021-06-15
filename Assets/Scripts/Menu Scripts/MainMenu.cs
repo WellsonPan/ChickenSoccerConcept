@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class MainMenu : MonoBehaviour
 {
@@ -17,12 +18,19 @@ public class MainMenu : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        ///TODO Add play button listener and logic
+        playButton.onClick.AddListener(PlayButtonClicked);
         levelSelectButton.onClick.AddListener(LoadLevelSelectCanvas);
         ///TODO Add customize button listener and logic
         optionsButton.onClick.AddListener(LoadOptionsCanvas);
         levelSelectCanvas.enabled = false;
         optionsCanvas.enabled = false;
+    }
+
+    void PlayButtonClicked()
+    {
+        mainCanvas.enabled = false;
+        SceneManager.LoadScene(1);
+        SceneManager.UnloadSceneAsync(SceneManager.GetActiveScene().buildIndex);
     }
 
     void LoadLevelSelectCanvas()
