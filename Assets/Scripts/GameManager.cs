@@ -14,6 +14,8 @@ public class GameManager : MonoBehaviour
     private float timeOfLevelCompletion;
     private byte timeCountOnce;
 
+    //TODO add an event listener to hear from the in game menu to pause the game
+
     // Start is called before the first frame update
     void Start()
     {

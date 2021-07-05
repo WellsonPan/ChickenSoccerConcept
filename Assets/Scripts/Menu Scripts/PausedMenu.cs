@@ -1,21 +1,19 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
-public class Options : MonoBehaviour
+public class PausedMenu : MonoBehaviour
 {
+    public Button muteAllButton;
+    public Button muteMusicButton;
+    public Button muteSfxButton;
     public Button mainMenuButton;
-    public Button muteAll;
-    public Button muteMusic;
-    public Button muteSFX;
 
     public Text muteAllButtonText;
     public Text muteMusicButtonText;
     public Text muteSfxButtonText;
-
-    public Canvas mainCanvas;
-    public Canvas optionsCanvas;
 
     private string checkedChar = "X";
     private string uncheckedChar = " ";
@@ -23,23 +21,15 @@ public class Options : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        muteAll.onClick.AddListener(MuteAllSounds);
-        muteMusic.onClick.AddListener(MuteAllMusic);
-        muteSFX.onClick.AddListener(MuteAllSFX);
-        mainMenuButton.onClick.AddListener(BackToMainMenuFromOptions);
+        muteAllButton.onClick.AddListener(MuteAllSounds);
+        muteMusicButton.onClick.AddListener(MuteAllMusic);
+        muteSfxButton.onClick.AddListener(MuteAllSFX);
+        mainMenuButton.onClick.AddListener(ReturnToMainMenu);
 
         MuteAllSounds();
         MuteAllMusic();
         MuteAllSFX();
     }
-
-    void BackToMainMenuFromOptions()
-    {
-        mainCanvas.enabled = true;
-        optionsCanvas.enabled = false;
-    }
-
-    //TODO change all the Debug statements to actual audio logic to mute and unmute sounds
 
     void MuteAllSounds()
     {
@@ -70,7 +60,7 @@ public class Options : MonoBehaviour
             Debug.Log("All music have been muted");
             GlobalVariables.mutedAllMusic = true;
             muteMusicButtonText.text = checkedChar;
-            if (GlobalVariables.mutedAllSFX)
+            if(GlobalVariables.mutedAllSFX)
             {
                 muteAllButtonText.text = checkedChar;
             }
@@ -91,7 +81,7 @@ public class Options : MonoBehaviour
             Debug.Log("All SFX have been muted");
             GlobalVariables.mutedAllSFX = true;
             muteSfxButtonText.text = checkedChar;
-            if (GlobalVariables.mutedAllMusic)
+            if(GlobalVariables.mutedAllMusic)
             {
                 muteAllButtonText.text = checkedChar;
             }
@@ -103,5 +93,11 @@ public class Options : MonoBehaviour
             muteSfxButtonText.text = uncheckedChar;
             muteAllButtonText.text = uncheckedChar;
         }
+    }
+
+    void ReturnToMainMenu()
+    {
+        SceneManager.LoadScene(0);
+        SceneManager.UnloadSceneAsync(SceneManager.GetActiveScene().buildIndex);
     }
 }

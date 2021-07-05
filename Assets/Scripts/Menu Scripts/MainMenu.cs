@@ -20,7 +20,7 @@ public class MainMenu : MonoBehaviour
     {
         playButton.onClick.AddListener(PlayButtonClicked);
         levelSelectButton.onClick.AddListener(LoadLevelSelectCanvas);
-        ///TODO Add customize button listener and logic
+        //TODO Change customize to "How to Play" and add custom listener for that
         optionsButton.onClick.AddListener(LoadOptionsCanvas);
         levelSelectCanvas.enabled = false;
         optionsCanvas.enabled = false;
