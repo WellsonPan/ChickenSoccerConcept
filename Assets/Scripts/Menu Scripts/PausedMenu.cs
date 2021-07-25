@@ -25,17 +25,13 @@ public class PausedMenu : MonoBehaviour
         muteMusicButton.onClick.AddListener(MuteAllMusic);
         muteSfxButton.onClick.AddListener(MuteAllSFX);
         mainMenuButton.onClick.AddListener(ReturnToMainMenu);
-
-        MuteAllSounds();
-        MuteAllMusic();
-        MuteAllSFX();
     }
 
     void MuteAllSounds()
     {
         if (!GlobalVariables.mutedAllMusic || !GlobalVariables.mutedAllSFX)
         {
-            Debug.Log("All sounds have been muted");
+            //Debug.Log("All sounds have been muted");
             GlobalVariables.mutedAllMusic = true;
             GlobalVariables.mutedAllSFX = true;
             muteAllButtonText.text = checkedChar;
@@ -44,7 +40,7 @@ public class PausedMenu : MonoBehaviour
         }
         else
         {
-            Debug.Log("All sounds have been unmuted");
+            //Debug.Log("All sounds have been unmuted");
             GlobalVariables.mutedAllMusic = false;
             GlobalVariables.mutedAllSFX = false;
             muteAllButtonText.text = uncheckedChar;
@@ -57,7 +53,7 @@ public class PausedMenu : MonoBehaviour
     {
         if (!GlobalVariables.mutedAllMusic)
         {
-            Debug.Log("All music have been muted");
+            //Debug.Log("All music have been muted");
             GlobalVariables.mutedAllMusic = true;
             muteMusicButtonText.text = checkedChar;
             if(GlobalVariables.mutedAllSFX)
@@ -67,7 +63,7 @@ public class PausedMenu : MonoBehaviour
         }
         else
         {
-            Debug.Log("All music have been unmuted");
+            //Debug.Log("All music have been unmuted");
             GlobalVariables.mutedAllMusic = false;
             muteMusicButtonText.text = uncheckedChar;
             muteAllButtonText.text = uncheckedChar;
@@ -78,7 +74,7 @@ public class PausedMenu : MonoBehaviour
     {
         if (!GlobalVariables.mutedAllSFX)
         {
-            Debug.Log("All SFX have been muted");
+            //Debug.Log("All SFX have been muted");
             GlobalVariables.mutedAllSFX = true;
             muteSfxButtonText.text = checkedChar;
             if(GlobalVariables.mutedAllMusic)
@@ -88,7 +84,7 @@ public class PausedMenu : MonoBehaviour
         }
         else
         {
-            Debug.Log("All SFX have been unmuted");
+            //Debug.Log("All SFX have been unmuted");
             GlobalVariables.mutedAllSFX = false;
             muteSfxButtonText.text = uncheckedChar;
             muteAllButtonText.text = uncheckedChar;
@@ -97,6 +93,11 @@ public class PausedMenu : MonoBehaviour
 
     void ReturnToMainMenu()
     {
+        if(Time.timeScale < 1f)
+        {
+            Time.timeScale = 1f;
+        }
+
         SceneManager.LoadScene(0);
         SceneManager.UnloadSceneAsync(SceneManager.GetActiveScene().buildIndex);
     }

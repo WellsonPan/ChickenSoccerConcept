@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
@@ -9,23 +10,31 @@ public class GameManager : MonoBehaviour
     public GameObject chicken;
     public GameObject player;
 
+    public Canvas levelCompletedMenu;
+    public Text timeCompletedText;
+    public Button nextLevelButton;
+
     public bool levelCompleted;
     private int currentLevel;
     private float timeOfLevelCompletion;
     private byte timeCountOnce;
 
-    //TODO add an event listener to hear from the in game menu to pause the game
+    private void Awake()
+    {
+        Application.targetFrameRate = 300; //sets the framerate, 300 = uncapped
+    }
 
     // Start is called before the first frame update
     void Start()
     {
-        Application.targetFrameRate = 300; //sets the framerate, 300 = uncapped
+        levelCompletedMenu.enabled = false;
         goal = GameObject.FindGameObjectWithTag("Finish");
         chicken = GameObject.FindGameObjectWithTag("Chicken");
         player = GameObject.FindGameObjectWithTag("Player");
         levelCompleted = false;
         timeCountOnce = 0;
         currentLevel = SceneManager.GetActiveScene().buildIndex;
+        nextLevelButton.onClick.AddListener(LoadNextLevel);
         //Debug.Log(currentLevel);
     }
 
@@ -35,6 +44,7 @@ public class GameManager : MonoBehaviour
         if(goal.GetComponent<Goal>().chickenEntered)
         {
             levelCompleted = true;
+            levelCompletedMenu.enabled = true;
             if (timeCountOnce == 0)
             {
                 timeOfLevelCompletion = Time.timeSinceLevelLoad; //This grabs the time to complete the level
@@ -43,6 +53,22 @@ public class GameManager : MonoBehaviour
             }
             chicken.GetComponent<ChickenMovement>().enabled = false;
             player.GetComponent<PlayerMovement>().enabled = false;
+
+            timeCompletedText.text = "Time Completed:\n" + timeOfLevelCompletion;
+            GlobalVariables.unlockedLevels[currentLevel] = true;
+
+            SaveGame();
         }
+    }
+
+    void LoadNextLevel()
+    {
+        SceneManager.LoadScene(currentLevel + 1);
+        SceneManager.UnloadSceneAsync(currentLevel);
+    }
+
+    void SaveGame()
+    {
+        //TODO Add logic to save the game as binary file
     }
 }

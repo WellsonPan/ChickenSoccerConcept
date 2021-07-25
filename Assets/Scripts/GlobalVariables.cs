@@ -9,4 +9,6 @@ public static class GlobalVariables
 
     public static float musicVolume;
     public static float sfxVolume;
+
+    public static bool[] unlockedLevels = new bool[25];
 }

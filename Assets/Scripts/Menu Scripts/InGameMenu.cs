@@ -33,11 +33,13 @@ public class InGameMenu : MonoBehaviour
         if(!isPaused)
         {
             isPaused = true;
+            Time.timeScale = 0f;
             pausedMenu.enabled = isPaused;
         }
         else
         {
             isPaused = false;
+            Time.timeScale = 1f;
             pausedMenu.enabled = false;
         }
     }
